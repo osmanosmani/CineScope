@@ -15,18 +15,53 @@ public class MoviesController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index(string? searchTerm)
+    public async Task<IActionResult> Index(string? searchTerm, string? genre, int? releaseYear)
     {
+        var normalizedSearchTerm = string.IsNullOrWhiteSpace(searchTerm)
+            ? null
+            : searchTerm.Trim();
+        var selectedGenre = string.IsNullOrWhiteSpace(genre)
+            ? null
+            : genre.Trim();
+
+        var genres = await _context.Movies
+            .AsNoTracking()
+            .Select(movie => movie.Genre)
+            .Distinct()
+            .OrderBy(movieGenre => movieGenre)
+            .ToListAsync();
+
+        var releaseYears = await _context.Movies
+            .AsNoTracking()
+            .Select(movie => movie.ReleaseYear)
+            .Distinct()
+            .OrderByDescending(year => year)
+            .ToListAsync();
+
         var moviesQuery = _context.Movies.AsNoTracking();
 
-        if (!string.IsNullOrWhiteSpace(searchTerm))
+        if (normalizedSearchTerm != null)
         {
-            moviesQuery = moviesQuery.Where(movie => movie.Title.Contains(searchTerm));
+            moviesQuery = moviesQuery.Where(movie => movie.Title.Contains(normalizedSearchTerm));
+        }
+
+        if (selectedGenre != null)
+        {
+            moviesQuery = moviesQuery.Where(movie => movie.Genre == selectedGenre);
+        }
+
+        if (releaseYear.HasValue)
+        {
+            moviesQuery = moviesQuery.Where(movie => movie.ReleaseYear == releaseYear.Value);
         }
 
         var viewModel = new MovieIndexViewModel
         {
-            SearchTerm = searchTerm,
+            SearchTerm = normalizedSearchTerm,
+            SelectedGenre = selectedGenre,
+            SelectedReleaseYear = releaseYear,
+            Genres = genres,
+            ReleaseYears = releaseYears,
             Movies = await moviesQuery
                 .OrderBy(movie => movie.Title)
                 .ToListAsync()

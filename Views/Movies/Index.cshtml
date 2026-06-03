@@ -7,35 +7,120 @@
 <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
     <div>
         <h1 class="h2 mb-1">Movie Management</h1>
-        <p class="text-muted mb-0">Create, search, edit, and manage the CineScope movie catalog.</p>
+        <p class="text-muted mb-0">Create, filter, edit, and manage the CineScope movie catalog.</p>
     </div>
     <a asp-action="Create" class="btn btn-primary">Add Movie</a>
 </div>
 
-<form asp-action="Index" method="get" class="row g-2 mb-4">
-    <div class="col-12 col-md-8 col-lg-6">
-        <label for="searchTerm" class="visually-hidden">Search by title</label>
-        <input id="searchTerm"
-               name="searchTerm"
-               value="@Model.SearchTerm"
-               class="form-control"
-               placeholder="Search movies by title" />
+<form asp-action="Index" method="get" class="movie-filter-bar mb-3">
+    <div class="row g-3 align-items-end">
+        <div class="col-12 col-lg-5">
+            <label for="searchTerm" class="visually-hidden">Search by title</label>
+            <input id="searchTerm"
+                   name="searchTerm"
+                   value="@Model.SearchTerm"
+                   class="form-control"
+                   placeholder="Search movies by title" />
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+            <label for="genre" class="form-label">Genre</label>
+            <select id="genre" name="genre" class="form-select">
+                <option value="">All genres</option>
+                @foreach (var genre in Model.Genres)
+                {
+                    if (genre == Model.SelectedGenre)
+                    {
+                        <option value="@genre" selected>@genre</option>
+                    }
+                    else
+                    {
+                        <option value="@genre">@genre</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-2">
+            <label for="releaseYear" class="form-label">Year</label>
+            <select id="releaseYear" name="releaseYear" class="form-select">
+                <option value="">All years</option>
+                @foreach (var year in Model.ReleaseYears)
+                {
+                    if (year == Model.SelectedReleaseYear)
+                    {
+                        <option value="@year" selected>@year</option>
+                    }
+                    else
+                    {
+                        <option value="@year">@year</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="col-12 col-lg-2 d-grid">
+            <button type="submit" class="btn btn-outline-primary">Apply Filters</button>
+        </div>
     </div>
-    <div class="col-12 col-md-auto">
-        <button type="submit" class="btn btn-outline-primary w-100">Search</button>
+</form>
+
+<div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
+    <div>
+        <p class="text-muted mb-2">
+            Showing <strong>@Model.Movies.Count</strong> movie(s)
+            @if (Model.HasActiveFilters)
+            {
+                <span>matching your filters</span>
+            }
+        </p>
+        @if (Model.HasActiveFilters)
+        {
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+                {
+                    <span class="badge text-bg-light border">Title: @Model.SearchTerm</span>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.SelectedGenre))
+                {
+                    <span class="badge text-bg-light border">Genre: @Model.SelectedGenre</span>
+                }
+                @if (Model.SelectedReleaseYear.HasValue)
+                {
+                    <span class="badge text-bg-light border">Year: @Model.SelectedReleaseYear</span>
+                }
+                <a asp-action="Index" class="btn btn-sm btn-link">Clear filters</a>
+            </div>
+        }
     </div>
-    @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+
+    @if (Model.Genres.Any())
     {
-        <div class="col-12 col-md-auto">
-            <a asp-action="Index" class="btn btn-outline-secondary w-100">Clear</a>
+        <div class="genre-pills d-flex flex-wrap gap-2">
+            <a asp-action="Index"
+               asp-route-searchTerm="@Model.SearchTerm"
+               asp-route-releaseYear="@Model.SelectedReleaseYear"
+               class="btn btn-sm @(string.IsNullOrWhiteSpace(Model.SelectedGenre) ? "btn-primary" : "btn-outline-secondary")">
+                All
+            </a>
+            @foreach (var genre in Model.Genres)
+            {
+                <a asp-action="Index"
+                   asp-route-searchTerm="@Model.SearchTerm"
+                   asp-route-genre="@genre"
+                   asp-route-releaseYear="@Model.SelectedReleaseYear"
+                   class="btn btn-sm @(genre == Model.SelectedGenre ? "btn-primary" : "btn-outline-secondary")">
+                    @genre
+                </a>
+            }
         </div>
     }
-</form>
+</div>
 
 @if (!Model.Movies.Any())
 {
     <div class="alert alert-info" role="alert">
-        No movies found. Add a movie to start building the catalog.
+        No movies found. Adjust the filters or add a new movie to the catalog.
     </div>
 }
 else
@@ -71,9 +156,9 @@ else
                             <strong>@movie.Title</strong>
                             <div class="small text-muted movie-description-preview">@movie.Description</div>
                         </td>
-                        <td>@movie.Genre</td>
+                        <td><span class="badge genre-badge">@movie.Genre</span></td>
                         <td>@movie.ReleaseYear</td>
-                        <td>@movie.Rating.ToString("0.0")</td>
+                        <td><span class="badge rating-badge">@movie.Rating.ToString("0.0")</span></td>
                         <td>@movie.Duration min</td>
                         <td class="text-end">
                             <div class="btn-group" role="group" aria-label="Movie actions">
