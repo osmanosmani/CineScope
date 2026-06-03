@@ -1,0 +1,27 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+
+# Local logs
+*.log
+tools/
+
+# OS files
+Thumbs.db
+.DS_Store

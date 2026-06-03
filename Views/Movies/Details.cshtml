@@ -1,0 +1,46 @@
+@model CineScope.Models.Movie
+
+@{
+    ViewData["Title"] = "Movie Details";
+}
+
+<div class="mb-4">
+    <a asp-action="Index" class="btn btn-link px-0">Back to Movies</a>
+    <h1 class="h2 mb-0">@Model.Title</h1>
+</div>
+
+<div class="row g-4">
+    <div class="col-12 col-md-4 col-lg-3">
+        @if (!string.IsNullOrWhiteSpace(Model.PosterUrl))
+        {
+            <img src="@Model.PosterUrl" alt="@Model.Title poster" class="img-fluid movie-poster" />
+        }
+        else
+        {
+            <div class="poster-placeholder poster-placeholder-large">No Poster</div>
+        }
+    </div>
+    <div class="col-12 col-md-8 col-lg-9">
+        <dl class="row details-list">
+            <dt class="col-sm-4">Genre</dt>
+            <dd class="col-sm-8">@Model.Genre</dd>
+
+            <dt class="col-sm-4">Release Year</dt>
+            <dd class="col-sm-8">@Model.ReleaseYear</dd>
+
+            <dt class="col-sm-4">Rating</dt>
+            <dd class="col-sm-8">@Model.Rating.ToString("0.0") / 10</dd>
+
+            <dt class="col-sm-4">Duration</dt>
+            <dd class="col-sm-8">@Model.Duration minutes</dd>
+
+            <dt class="col-sm-4">Description</dt>
+            <dd class="col-sm-8">@Model.Description</dd>
+        </dl>
+
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">Delete</a>
+        </div>
+    </div>
+</div>

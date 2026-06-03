@@ -1,0 +1,90 @@
+@model CineScope.ViewModels.MovieIndexViewModel
+
+@{
+    ViewData["Title"] = "Movies";
+}
+
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+    <div>
+        <h1 class="h2 mb-1">Movie Management</h1>
+        <p class="text-muted mb-0">Create, search, edit, and manage the CineScope movie catalog.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">Add Movie</a>
+</div>
+
+<form asp-action="Index" method="get" class="row g-2 mb-4">
+    <div class="col-12 col-md-8 col-lg-6">
+        <label for="searchTerm" class="visually-hidden">Search by title</label>
+        <input id="searchTerm"
+               name="searchTerm"
+               value="@Model.SearchTerm"
+               class="form-control"
+               placeholder="Search movies by title" />
+    </div>
+    <div class="col-12 col-md-auto">
+        <button type="submit" class="btn btn-outline-primary w-100">Search</button>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+    {
+        <div class="col-12 col-md-auto">
+            <a asp-action="Index" class="btn btn-outline-secondary w-100">Clear</a>
+        </div>
+    }
+</form>
+
+@if (!Model.Movies.Any())
+{
+    <div class="alert alert-info" role="alert">
+        No movies found. Add a movie to start building the catalog.
+    </div>
+}
+else
+{
+    <div class="table-responsive movie-table">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Poster</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Genre</th>
+                    <th scope="col">Year</th>
+                    <th scope="col">Rating</th>
+                    <th scope="col">Duration</th>
+                    <th scope="col" class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var movie in Model.Movies)
+                {
+                    <tr>
+                        <td class="poster-cell">
+                            @if (!string.IsNullOrWhiteSpace(movie.PosterUrl))
+                            {
+                                <img src="@movie.PosterUrl" alt="@movie.Title poster" class="poster-thumb" />
+                            }
+                            else
+                            {
+                                <div class="poster-placeholder">No Poster</div>
+                            }
+                        </td>
+                        <td>
+                            <strong>@movie.Title</strong>
+                            <div class="small text-muted movie-description-preview">@movie.Description</div>
+                        </td>
+                        <td>@movie.Genre</td>
+                        <td>@movie.ReleaseYear</td>
+                        <td>@movie.Rating.ToString("0.0")</td>
+                        <td>@movie.Duration min</td>
+                        <td class="text-end">
+                            <div class="btn-group" role="group" aria-label="Movie actions">
+                                <a asp-action="Details" asp-route-id="@movie.Id" class="btn btn-sm btn-outline-secondary">Details</a>
+                                <a asp-action="Edit" asp-route-id="@movie.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@movie.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

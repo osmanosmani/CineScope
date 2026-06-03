@@ -1,0 +1,39 @@
+@model CineScope.Models.Movie
+
+@{
+    ViewData["Title"] = "Delete Movie";
+}
+
+<div class="mb-4">
+    <a asp-action="Index" class="btn btn-link px-0">Back to Movies</a>
+    <h1 class="h2 mb-1">Delete Movie</h1>
+    <p class="text-muted mb-0">Confirm that this movie should be removed from the catalog.</p>
+</div>
+
+<div class="alert alert-warning" role="alert">
+    This action cannot be undone.
+</div>
+
+<div class="row g-4 align-items-start">
+    <div class="col-12 col-md-4 col-lg-3">
+        @if (!string.IsNullOrWhiteSpace(Model.PosterUrl))
+        {
+            <img src="@Model.PosterUrl" alt="@Model.Title poster" class="img-fluid movie-poster" />
+        }
+        else
+        {
+            <div class="poster-placeholder poster-placeholder-large">No Poster</div>
+        }
+    </div>
+    <div class="col-12 col-md-8 col-lg-9">
+        <h2 class="h4">@Model.Title</h2>
+        <p class="text-muted">@Model.Genre | @Model.ReleaseYear | @Model.Duration min</p>
+        <p>@Model.Description</p>
+
+        <form asp-action="Delete" method="post" class="d-flex gap-2">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger">Delete Movie</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
