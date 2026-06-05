@@ -2,6 +2,11 @@
 
 CineScope is a school mini project and portfolio-ready ASP.NET Core MVC application for discovering, managing, reviewing, and importing movies. It started as a basic CRUD movie management system and was extended step by step with a modern UI, authentication, roles, reviews, favorites, external API import, admin analytics, and simple real-time notifications.
 
+## Project Links
+
+- Live Azure app: https://app-cinescope-osman-hma2adbye5bjgxcy.swedencentral-01.azurewebsites.net
+- GitHub repository: https://github.com/osmanosmani/CineScope
+
 ## Tech Stack
 
 - ASP.NET Core MVC
@@ -200,14 +205,29 @@ CineScope/
 
 ## Deployment Notes
 
-For Azure App Service:
+Recommended Azure architecture:
 
-1. Create an Azure App Service.
-2. Create an Azure SQL Database.
-3. Set the production connection string in Azure App Service Configuration.
-4. Set `Tmdb:ApiKey` as an App Service application setting.
-5. Publish from Visual Studio or a GitHub Actions workflow.
-6. Run EF Core migrations against the production database.
+```text
+User Browser -> Azure App Service -> Azure SQL Database
+```
+
+Azure resources used:
+
+- Resource Group: `rg-cinescope-school`
+- Azure SQL Server: `sql-cinescope-osman`
+- Azure SQL Database: `CineScopeDb`
+- Azure App Service Plan: `asp-cinescope-school`
+- Azure App Service: `app-cinescope-osman`
+
+Deployment checklist:
+
+1. Create Azure SQL Database.
+2. Create Azure App Service.
+3. Add `DefaultConnection` in App Service connection strings.
+4. Add `Tmdb__ApiKey` in App Service app settings.
+5. Apply EF Core migrations to Azure SQL.
+6. Publish from Visual Studio.
+7. Test the live URL.
 
 See `Docs/Deployment-Guide.md` for details.
 
