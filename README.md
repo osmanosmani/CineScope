@@ -1,11 +1,28 @@
 # CineScope - Modern Movie Discovery Platform
 
-CineScope is a school mini project and portfolio-ready ASP.NET Core MVC application for discovering, managing, reviewing, and importing movies. It started as a basic CRUD movie management system and was extended step by step with a modern UI, authentication, roles, reviews, favorites, external API import, admin analytics, and simple real-time notifications.
+CineScope is a full-stack ASP.NET Core MVC portfolio project that demonstrates practical web application development with a real database, authentication, role-based authorization, external API integration, admin analytics, and Azure deployment.
+
+The application is built as a modern movie discovery platform where users can browse movies, search and filter the catalog, review movies, manage favorites, and where Admin users can manage local movie data and import movies from TMDB.
 
 ## Project Links
 
 - Live Azure app: [CineScope on Azure](https://app-cinescope-osman-hma2adbye5bjgxcy.swedencentral-01.azurewebsites.net)
 - GitHub repository: [github.com/osmanosmani/CineScope](https://github.com/osmanosmani/CineScope)
+
+## Portfolio Summary
+
+This project shows that I can build and deploy a complete ASP.NET Core MVC application from database design to production hosting.
+
+Key skills demonstrated:
+
+- Building MVC applications with controllers, models, Razor views, and view models
+- Designing relational data with Entity Framework Core and SQL Server
+- Implementing ASP.NET Core Identity with roles and authorization rules
+- Creating CRUD workflows with validation and clean UI
+- Integrating an external REST API through a service layer
+- Using Bootstrap 5 and custom CSS for a responsive dark UI
+- Deploying an ASP.NET Core application to Azure App Service with Azure SQL Database
+- Writing project documentation for setup, architecture, roles, API flow, and deployment
 
 ## Tech Stack
 
@@ -36,6 +53,34 @@ CineScope is a school mini project and portfolio-ready ASP.NET Core MVC applicat
 - Admin analytics dashboard
 - Latest reviews, active users, top genres, top-rated movie, most reviewed movie, recent movies
 - Simple SignalR active users indicator and toast notifications
+
+## Technical Highlights
+
+- `ApplicationDbContext` uses Entity Framework Core and ASP.NET Core Identity tables in one database context.
+- Movie management is protected so only Admin users can create, edit, and delete movies.
+- Guest users can browse, search, filter, and view details without logging in.
+- Member users can add reviews, give ratings, and manage favorites.
+- TMDB integration is separated into a service layer, so external API logic is not mixed into controllers.
+- Duplicate movie imports are prevented by checking title and release year before saving.
+- The live version uses Azure App Service for hosting and Azure SQL Database for production data.
+- Secrets such as connection strings and API keys are configured through Azure environment variables.
+
+## Architecture Overview
+
+```text
+Browser
+  -> ASP.NET Core MVC Controllers
+  -> ViewModels and Razor Views
+  -> Services, including TMDB API service
+  -> Entity Framework Core
+  -> SQL Server / Azure SQL Database
+```
+
+Live deployment:
+
+```text
+User Browser -> Azure App Service -> Azure SQL Database
+```
 
 ## User Roles
 
@@ -147,7 +192,7 @@ Do not commit real API keys to GitHub.
 
 ## Screenshots
 
-The screenshots below show the main CineScope pages for the final school submission.
+The screenshots below show the main CineScope pages for a portfolio/demo walkthrough.
 
 ### Homepage
 
@@ -209,12 +254,6 @@ CineScope/
 - `/Admin` - Admin dashboard
 
 ## Deployment Notes
-
-Recommended Azure architecture:
-
-```text
-User Browser -> Azure App Service -> Azure SQL Database
-```
 
 Azure resources used:
 
