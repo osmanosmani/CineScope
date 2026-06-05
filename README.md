@@ -4,12 +4,13 @@ CineScope is a school mini project and portfolio-ready ASP.NET Core MVC applicat
 
 ## Project Links
 
-- Live Azure app: https://app-cinescope-osman-hma2adbye5bjgxcy.swedencentral-01.azurewebsites.net
-- GitHub repository: https://github.com/osmanosmani/CineScope
+- Live Azure app: [CineScope on Azure](https://app-cinescope-osman-hma2adbye5bjgxcy.swedencentral-01.azurewebsites.net)
+- GitHub repository: [github.com/osmanosmani/CineScope](https://github.com/osmanosmani/CineScope)
 
 ## Tech Stack
 
 - ASP.NET Core MVC
+- .NET 10.0
 - SQL Server LocalDB / SQL Server
 - Entity Framework Core
 - Razor Views
@@ -18,6 +19,7 @@ CineScope is a school mini project and portfolio-ready ASP.NET Core MVC applicat
 - Role-based authorization
 - TMDB external movie API
 - SignalR for simple real-time notifications
+- Azure App Service and Azure SQL Database for live deployment
 
 ## Features
 
@@ -68,17 +70,20 @@ Password: Admin123!
 
 The Admin user and roles are created automatically by `IdentitySeeder` when the app starts.
 
+Security note: this default Admin account is included only for school demo/testing. For a real production app, change the password and keep all secrets in user secrets or Azure environment variables.
+
 ## Run Locally
 
 Prerequisites:
 
-- .NET SDK installed
+- .NET 10 SDK installed
 - SQL Server LocalDB or SQL Server
 - EF Core tools installed
 
 Commands:
 
 ```powershell
+dotnet tool install --global dotnet-ef
 dotnet restore
 dotnet build
 dotnet ef database update
@@ -230,6 +235,8 @@ Deployment checklist:
 7. Test the live URL.
 
 See `Docs/Deployment-Guide.md` for details.
+
+Secrets are not stored in the repository. The live app reads `DefaultConnection` and `Tmdb__ApiKey` from Azure App Service environment variables.
 
 ## Future Improvements
 
