@@ -9,7 +9,10 @@
         <h1 class="h2 mb-1">Movie Management</h1>
         <p class="text-muted mb-0">Create, filter, edit, and manage the CineScope movie catalog.</p>
     </div>
-    <a asp-action="Create" class="btn btn-primary">Add Movie</a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-primary">Add Movie</a>
+    }
 </div>
 
 <form asp-action="Index" method="get" class="movie-filter-bar mb-3">
@@ -159,12 +162,15 @@ else
                         <td><span class="badge genre-badge">@movie.Genre</span></td>
                         <td>@movie.ReleaseYear</td>
                         <td><span class="badge rating-badge">@movie.Rating.ToString("0.0")</span></td>
-                        <td>@movie.Duration min</td>
+                        <td>@(movie.Duration > 0 ? $"{movie.Duration} min" : "Unknown")</td>
                         <td class="text-end">
                             <div class="btn-group" role="group" aria-label="Movie actions">
                                 <a asp-action="Details" asp-route-id="@movie.Id" class="btn btn-sm btn-outline-secondary">Details</a>
-                                <a asp-action="Edit" asp-route-id="@movie.Id" class="btn btn-sm btn-outline-primary">Edit</a>
-                                <a asp-action="Delete" asp-route-id="@movie.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@movie.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                                    <a asp-action="Delete" asp-route-id="@movie.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                                }
                             </div>
                         </td>
                     </tr>

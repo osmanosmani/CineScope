@@ -1,0 +1,212 @@
+@model CineScope.ViewModels.MovieDiscoverViewModel
+
+@{
+    ViewData["Title"] = "Discover";
+    ViewData["ContainerClass"] = "discover-container";
+    ViewData["MainClass"] = "discover-main";
+    var movieGridTitle = Model.HasActiveFilters ? "Movies Matching Your Search" : "Top Rated Movies";
+}
+
+<section class="discover-hero mb-5">
+    <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-7">
+            <span class="section-kicker">Modern Movie Discovery</span>
+            <h1 class="display-5 fw-bold mt-2 mb-3">CineScope</h1>
+            <p class="lead text-muted mb-4">
+                Browse a curated movie catalog, search by title, filter by genre, and jump into details from a modern discovery homepage.
+            </p>
+
+            <form asp-action="Discover" method="get" class="hero-search mb-4">
+                <div class="input-group">
+                    <input name="searchTerm"
+                           value="@Model.SearchTerm"
+                           class="form-control"
+                           placeholder="Search the catalog by title" />
+                    @if (!string.IsNullOrWhiteSpace(Model.SelectedGenre))
+                    {
+                        <input type="hidden" name="genre" value="@Model.SelectedGenre" />
+                    }
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </form>
+
+            <div class="d-flex flex-wrap align-items-center gap-3">
+                <span class="catalog-stat">@Model.TotalMovies movie(s)</span>
+                @if (Model.SpotlightMovie != null)
+                {
+                    <span class="catalog-stat">@Model.SpotlightMovie.Rating.ToString("0.0") top rating</span>
+                    <span class="catalog-stat">@Model.SpotlightMovie.Genre spotlight</span>
+                }
+            </div>
+
+            @if (Model.HasActiveFilters)
+            {
+                <div class="d-flex flex-wrap align-items-center gap-2 mt-4">
+                    @if (!string.IsNullOrWhiteSpace(Model.SearchTerm))
+                    {
+                        <span class="badge active-filter-badge">Title: @Model.SearchTerm</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.SelectedGenre))
+                    {
+                        <span class="badge active-filter-badge">Genre: @Model.SelectedGenre</span>
+                    }
+                    <a asp-action="Discover" class="btn btn-sm btn-outline-light">Clear</a>
+                </div>
+            }
+        </div>
+
+        <div class="col-12 col-lg-5">
+            @if (Model.SpotlightMovie != null)
+            {
+                <article class="spotlight-card">
+                    @if (!string.IsNullOrWhiteSpace(Model.SpotlightMovie.PosterUrl))
+                    {
+                        <img src="@Model.SpotlightMovie.PosterUrl" alt="@Model.SpotlightMovie.Title poster" class="spotlight-poster" />
+                    }
+                    else
+                    {
+                        <div class="spotlight-poster-placeholder">No Poster</div>
+                    }
+
+                    <div class="spotlight-card-body">
+                        <span class="badge rating-badge">@Model.SpotlightMovie.Rating.ToString("0.0")</span>
+                        <h2 class="h5 mt-3 mb-1">@Model.SpotlightMovie.Title</h2>
+                        <p class="small text-muted mb-3">
+                            @Model.SpotlightMovie.Genre | @Model.SpotlightMovie.ReleaseYear |
+                            @(Model.SpotlightMovie.Duration > 0 ? $"{Model.SpotlightMovie.Duration} min" : "Unknown duration")
+                        </p>
+                        <a asp-action="Details" asp-route-id="@Model.SpotlightMovie.Id" class="btn btn-sm btn-primary w-100">Details</a>
+                    </div>
+                </article>
+            }
+            else
+            {
+                <div class="empty-spotlight">
+                    <h2 class="h5">No movies found</h2>
+                    <p class="text-muted mb-3">Add movies or clear the active filters to show discovery cards.</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Create" class="btn btn-primary">Add Movie</a>
+                        }
+                        <a asp-action="Discover" class="btn btn-outline-light">Clear Filters</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section id="genres" class="content-panel mb-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+        <div>
+            <span class="section-kicker">Categories</span>
+            <h2 class="h4 mt-2 mb-1">Browse by Genre</h2>
+            <p class="text-muted mb-0">Filter the homepage without leaving the discovery experience.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-light align-self-md-start">Movie Management</a>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+        <a asp-action="Discover"
+           asp-route-searchTerm="@Model.SearchTerm"
+           class="btn btn-sm @(string.IsNullOrWhiteSpace(Model.SelectedGenre) ? "btn-primary" : "btn-outline-light")">
+            All
+        </a>
+        @foreach (var genre in Model.Genres)
+        {
+            <a asp-action="Discover"
+               asp-route-searchTerm="@Model.SearchTerm"
+               asp-route-genre="@genre"
+               class="btn btn-sm @(genre == Model.SelectedGenre ? "btn-primary" : "btn-outline-light")">
+                @genre
+            </a>
+        }
+    </div>
+</section>
+
+<section class="mb-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+        <div>
+            <span class="section-kicker">Catalog</span>
+            <h2 class="h4 mt-2 mb-1">@movieGridTitle</h2>
+            <p class="text-muted mb-0">Movie cards show poster, title, genre, rating, year, and quick access to details.</p>
+        </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-primary align-self-md-start">Add Movie</a>
+        }
+    </div>
+
+    @if (!Model.Movies.Any())
+    {
+        <div class="content-panel text-center py-5">
+            <h3 class="h5">No movies to display</h3>
+            <p class="text-muted mb-4">Try another search, choose a different genre, or add a new movie.</p>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-action="Create" class="btn btn-primary">Add Movie</a>
+            }
+            else
+            {
+                <a asp-action="Discover" class="btn btn-primary">Clear Filters</a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var movie in Model.Movies)
+            {
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <article class="movie-card h-100">
+                        <a asp-action="Details" asp-route-id="@movie.Id" class="movie-card-poster-link">
+                            @if (!string.IsNullOrWhiteSpace(movie.PosterUrl))
+                            {
+                                <img src="@movie.PosterUrl" alt="@movie.Title poster" class="movie-card-poster" />
+                            }
+                            else
+                            {
+                                <div class="movie-card-placeholder">No Poster</div>
+                            }
+                        </a>
+                        <div class="movie-card-body">
+                            <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+                                <span class="badge genre-badge">@movie.Genre</span>
+                                <span class="badge rating-badge">@movie.Rating.ToString("0.0")</span>
+                            </div>
+                            <h3 class="h6 mb-1">@movie.Title</h3>
+                            <p class="small text-muted mb-3">@movie.ReleaseYear | @(movie.Duration > 0 ? $"{movie.Duration} min" : "Unknown duration")</p>
+                            <a asp-action="Details" asp-route-id="@movie.Id" class="btn btn-sm btn-outline-light w-100">Details</a>
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+    }
+</section>
+
+@if (Model.RecentlyReleasedMovies.Any())
+{
+    <section class="content-panel">
+        <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+            <div>
+                <span class="section-kicker">Recently Released</span>
+                <h2 class="h4 mt-2 mb-1">Newest by Release Year</h2>
+            </div>
+        </div>
+
+        <div class="list-group release-list">
+            @foreach (var movie in Model.RecentlyReleasedMovies)
+            {
+                <a asp-action="Details" asp-route-id="@movie.Id" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-3">
+                    <span>
+                        <strong>@movie.Title</strong>
+                        <span class="text-muted ms-2">@movie.Genre</span>
+                    </span>
+                    <span class="badge text-bg-dark border">@movie.ReleaseYear</span>
+                </a>
+            }
+        </div>
+    </section>
+}

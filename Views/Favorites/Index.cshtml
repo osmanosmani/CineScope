@@ -1,0 +1,62 @@
+@model CineScope.ViewModels.FavoriteMoviesViewModel
+
+@{
+    ViewData["Title"] = "My Favorites";
+}
+
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+    <div>
+        <h1 class="h2 mb-1">My Favorites</h1>
+        <p class="text-muted mb-0">Movies you saved from the CineScope catalog.</p>
+    </div>
+    <a asp-controller="Movies" asp-action="Discover" class="btn btn-outline-light">Discover Movies</a>
+</div>
+
+@if (!Model.Favorites.Any())
+{
+    <div class="content-panel text-center py-5">
+        <h2 class="h5">No favorites yet</h2>
+        <p class="text-muted mb-4">Open a movie details page and save it to your favorites list.</p>
+        <a asp-controller="Movies" asp-action="Discover" class="btn btn-primary">Browse Movies</a>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var favorite in Model.Favorites)
+        {
+            <div class="col-12 col-sm-6 col-lg-3">
+                <article class="movie-card h-100">
+                    <a asp-controller="Movies" asp-action="Details" asp-route-id="@favorite.MovieId" class="movie-card-poster-link">
+                        @if (!string.IsNullOrWhiteSpace(favorite.Movie.PosterUrl))
+                        {
+                            <img src="@favorite.Movie.PosterUrl" alt="@favorite.Movie.Title poster" class="movie-card-poster" />
+                        }
+                        else
+                        {
+                            <div class="movie-card-placeholder">No Poster</div>
+                        }
+                    </a>
+                    <div class="movie-card-body">
+                        <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+                            <span class="badge genre-badge">@favorite.Movie.Genre</span>
+                            <span class="badge rating-badge">@favorite.Movie.Rating.ToString("0.0")</span>
+                        </div>
+                        <h2 class="h6 mb-1">@favorite.Movie.Title</h2>
+                        <p class="small text-muted mb-3">
+                            @favorite.Movie.ReleaseYear | @(favorite.Movie.Duration > 0 ? $"{favorite.Movie.Duration} min" : "Unknown duration")
+                        </p>
+                        <div class="favorite-card-actions">
+                            <a asp-controller="Movies" asp-action="Details" asp-route-id="@favorite.MovieId" class="btn btn-sm btn-outline-light">Details</a>
+                            <form asp-controller="Favorites" asp-action="Remove" method="post">
+                                <input type="hidden" name="movieId" value="@favorite.MovieId" />
+                                <input type="hidden" name="returnUrl" value="@Url.Action("Index", "Favorites")" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        }
+    </div>
+}

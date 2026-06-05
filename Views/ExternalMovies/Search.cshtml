@@ -1,0 +1,55 @@
+@model CineScope.ViewModels.ExternalMovieSearchViewModel
+
+@{
+    ViewData["Title"] = "External Movie Search";
+}
+
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+    <div>
+        <span class="section-kicker">TMDB Import</span>
+        <h1 class="h2 mt-2 mb-1">@Model.PageTitle</h1>
+        <p class="text-muted mb-0">@Model.PageDescription</p>
+    </div>
+    <a asp-action="Trending" class="btn btn-outline-light">Trending Movies</a>
+</div>
+
+@await Html.PartialAsync("_ExternalMovieMessages")
+
+<form asp-action="Search" method="get" class="movie-filter-bar mb-4">
+    <div class="row g-3 align-items-end">
+        <div class="col-12 col-lg-9">
+            <label for="searchTerm" class="form-label">Movie title</label>
+            <input id="searchTerm"
+                   name="searchTerm"
+                   value="@Model.SearchTerm"
+                   class="form-control"
+                   placeholder="Search TMDB by title" />
+        </div>
+        <div class="col-12 col-lg-3 d-grid">
+            <button type="submit" class="btn btn-primary">Search TMDB</button>
+        </div>
+    </div>
+</form>
+
+@if (!Model.IsApiConfigured)
+{
+    <div class="alert alert-warning" role="alert">
+        Add your TMDB API key in <code>appsettings.json</code> under <code>Tmdb:ApiKey</code> before searching.
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-warning" role="alert">@Model.ErrorMessage</div>
+}
+
+@if (Model.HasSearched)
+{
+    @await Html.PartialAsync("_ExternalMovieResults", Model)
+}
+else
+{
+    <div class="content-panel text-center py-5">
+        <h2 class="h5">Search TMDB</h2>
+        <p class="text-muted mb-0">Enter a title above to find movies that can be imported into CineScope.</p>
+    </div>
+}

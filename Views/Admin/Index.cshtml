@@ -1,0 +1,239 @@
+@model CineScope.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="admin-dashboard">
+    <div class="d-flex flex-column flex-xl-row align-items-xl-center justify-content-between gap-3 mb-4">
+        <div>
+            <span class="section-kicker">Admin Analytics</span>
+            <h1 class="h2 mt-2 mb-1">CineScope Dashboard</h1>
+            <p class="text-muted mb-0">Platform snapshot generated @Model.GeneratedAt.ToLocalTime().ToString("MMM dd, yyyy HH:mm").</p>
+        </div>
+
+        <div class="admin-toolbar">
+            <div class="date-range-placeholder">
+                <span>Last 30 days</span>
+            </div>
+            <button type="button" class="btn btn-outline-light" disabled>Download Report</button>
+        </div>
+    </div>
+
+    <section class="admin-stat-grid mb-4">
+        <article class="admin-stat-card">
+            <span>Total Movies</span>
+            <strong>@Model.TotalMovies</strong>
+            <small>Local catalog records</small>
+        </article>
+
+        <article class="admin-stat-card">
+            <span>Total Users</span>
+            <strong>@Model.TotalUsers</strong>
+            <small>Identity accounts</small>
+        </article>
+
+        <article class="admin-stat-card admin-stat-card-live">
+            <span>Active Users</span>
+            <strong id="adminActiveUsersCount">@Model.ActiveUsers</strong>
+            <small>Live SignalR connections</small>
+        </article>
+
+        <article class="admin-stat-card">
+            <span>Total Reviews</span>
+            <strong>@Model.TotalReviews</strong>
+            <small>Member feedback</small>
+        </article>
+
+        <article class="admin-stat-card">
+            <span>Favorites</span>
+            <strong>@Model.TotalFavorites</strong>
+            <small>Saved movies</small>
+        </article>
+    </section>
+
+    <section class="row g-4 mb-4">
+        <div class="col-12 col-lg-6">
+            <div class="admin-panel h-100">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <div>
+                        <span class="section-kicker">Top Rated</span>
+                        <h2 class="h5 mt-2 mb-0">Highest Catalog Rating</h2>
+                    </div>
+                </div>
+
+                @if (Model.TopRatedMovie == null)
+                {
+                    <p class="text-muted mb-0">No movies available yet.</p>
+                }
+                else
+                {
+                    <div class="admin-highlight">
+                        <div>
+                            <a asp-controller="Movies" asp-action="Details" asp-route-id="@Model.TopRatedMovie.Id" class="admin-highlight-title">
+                                @Model.TopRatedMovie.Title
+                            </a>
+                            <p class="text-muted mb-0">@Model.TopRatedMovie.Genre | @Model.TopRatedMovie.ReleaseYear</p>
+                        </div>
+                        <span class="badge rating-badge">@Model.TopRatedMovie.Rating.ToString("0.0")</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-6">
+            <div class="admin-panel h-100">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <div>
+                        <span class="section-kicker">Most Reviewed</span>
+                        <h2 class="h5 mt-2 mb-0">Strongest Discussion</h2>
+                    </div>
+                </div>
+
+                @if (Model.MostReviewedMovie == null)
+                {
+                    <p class="text-muted mb-0">No reviews have been added yet.</p>
+                }
+                else
+                {
+                    <div class="admin-highlight">
+                        <div>
+                            <a asp-controller="Movies" asp-action="Details" asp-route-id="@Model.MostReviewedMovie.Id" class="admin-highlight-title">
+                                @Model.MostReviewedMovie.Title
+                            </a>
+                            <p class="text-muted mb-0">@Model.MostReviewedMovie.ReviewCount review(s) | @Model.MostReviewedMovie.FavoriteCount favorite(s)</p>
+                        </div>
+                        <span class="badge genre-badge">@Model.MostReviewedMovie.Genre</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="row g-4">
+        <div class="col-12 col-xl-7">
+            <div class="admin-panel h-100">
+                <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+                    <div>
+                        <span class="section-kicker">Reviews</span>
+                        <h2 class="h5 mt-2 mb-0">Latest Reviews</h2>
+                    </div>
+                </div>
+
+                @if (!Model.LatestReviews.Any())
+                {
+                    <p class="text-muted mb-0">No reviews yet.</p>
+                }
+                else
+                {
+                    <div class="table-responsive admin-table">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Movie</th>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Rating</th>
+                                    <th scope="col">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var review in Model.LatestReviews)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a asp-controller="Movies" asp-action="Details" asp-route-id="@review.MovieId">@review.MovieTitle</a>
+                                            <div class="small text-muted admin-review-preview">@review.Comment</div>
+                                        </td>
+                                        <td>@review.UserEmail</td>
+                                        <td><span class="badge rating-badge">@review.Rating.ToString("0.0")</span></td>
+                                        <td>@review.CreatedAt.ToLocalTime().ToString("MMM dd")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-5">
+            <div class="admin-panel h-100">
+                <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+                    <div>
+                        <span class="section-kicker">Genres</span>
+                        <h2 class="h5 mt-2 mb-0">Top Genres</h2>
+                    </div>
+                </div>
+
+                @if (!Model.TopGenres.Any())
+                {
+                    <p class="text-muted mb-0">No genres available yet.</p>
+                }
+                else
+                {
+                    <div class="admin-genre-list">
+                        @foreach (var genre in Model.TopGenres)
+                        {
+                            <div class="admin-genre-row">
+                                <div class="d-flex justify-content-between gap-3 mb-2">
+                                    <span>@genre.Genre</span>
+                                    <span class="text-muted">@genre.MovieCount movie(s)</span>
+                                </div>
+                                <div class="progress admin-progress" role="progressbar" aria-label="@genre.Genre" aria-valuenow="@genre.Percentage" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar" style="width: @genre.Percentage%"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="admin-panel">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+                    <div>
+                        <span class="section-kicker">Catalog</span>
+                        <h2 class="h5 mt-2 mb-0">Recently Added Movies</h2>
+                    </div>
+                    <a asp-controller="ExternalMovies" asp-action="Search" class="btn btn-outline-light">Import Movies</a>
+                </div>
+
+                @if (!Model.RecentlyAddedMovies.Any())
+                {
+                    <p class="text-muted mb-0">No movies have been added yet.</p>
+                }
+                else
+                {
+                    <div class="table-responsive admin-table">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Genre</th>
+                                    <th scope="col">Year</th>
+                                    <th scope="col">Rating</th>
+                                    <th scope="col">Reviews</th>
+                                    <th scope="col">Favorites</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var movie in Model.RecentlyAddedMovies)
+                                {
+                                    <tr>
+                                        <td><a asp-controller="Movies" asp-action="Details" asp-route-id="@movie.Id">@movie.Title</a></td>
+                                        <td><span class="badge genre-badge">@movie.Genre</span></td>
+                                        <td>@movie.ReleaseYear</td>
+                                        <td><span class="badge rating-badge">@movie.Rating.ToString("0.0")</span></td>
+                                        <td>@movie.ReviewCount</td>
+                                        <td>@movie.FavoriteCount</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+</div>

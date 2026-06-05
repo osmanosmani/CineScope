@@ -1,0 +1,29 @@
+@model CineScope.ViewModels.ExternalMovieSearchViewModel
+
+@{
+    ViewData["Title"] = "Trending Movies";
+}
+
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+    <div>
+        <span class="section-kicker">TMDB Import</span>
+        <h1 class="h2 mt-2 mb-1">@Model.PageTitle</h1>
+        <p class="text-muted mb-0">@Model.PageDescription</p>
+    </div>
+    <a asp-action="Search" class="btn btn-outline-light">Search TMDB</a>
+</div>
+
+@await Html.PartialAsync("_ExternalMovieMessages")
+
+@if (!Model.IsApiConfigured)
+{
+    <div class="alert alert-warning" role="alert">
+        Add your TMDB API key in <code>appsettings.json</code> under <code>Tmdb:ApiKey</code> before loading trending movies.
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-warning" role="alert">@Model.ErrorMessage</div>
+}
+
+@await Html.PartialAsync("_ExternalMovieResults", Model)

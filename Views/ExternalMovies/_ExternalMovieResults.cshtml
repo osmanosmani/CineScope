@@ -1,0 +1,64 @@
+@model CineScope.ViewModels.ExternalMovieSearchViewModel
+
+@if (!Model.Results.Any())
+{
+    <div class="content-panel text-center py-5">
+        <h2 class="h5">@Model.EmptyMessage</h2>
+        <p class="text-muted mb-0">Try another search term or check your TMDB API configuration.</p>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        @foreach (var movie in Model.Results)
+        {
+            <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                <article class="movie-card external-movie-card h-100">
+                    @if (!string.IsNullOrWhiteSpace(movie.PosterUrl))
+                    {
+                        <img src="@movie.PosterUrl" alt="@movie.Title poster" class="movie-card-poster" />
+                    }
+                    else
+                    {
+                        <div class="movie-card-placeholder">No Poster</div>
+                    }
+
+                    <div class="movie-card-body">
+                        <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+                            <span class="badge genre-badge">@movie.Genre</span>
+                            <span class="badge rating-badge">@movie.Rating.ToString("0.0")</span>
+                        </div>
+
+                        <h2 class="h6 mb-2">@movie.Title</h2>
+                        <p class="small text-muted mb-2">
+                            @(movie.ReleaseYear > 0 ? movie.ReleaseYear.ToString() : "Year unknown")
+                            @if (movie.Duration.HasValue && movie.Duration.Value > 0)
+                            {
+                                <span>| @movie.Duration.Value min</span>
+                            }
+                        </p>
+                        <p class="external-movie-description text-muted">@movie.Description</p>
+
+                        @if (movie.IsAlreadyImported)
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-secondary w-100" disabled>Already Imported</button>
+                        }
+                        else if (movie.ReleaseYear <= 0)
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-secondary w-100" disabled>Missing Release Year</button>
+                        }
+                        else
+                        {
+                            <form asp-controller="ExternalMovies" asp-action="Import" method="post">
+                                <input type="hidden" name="ExternalId" value="@movie.ExternalId" />
+                                <input type="hidden" name="ReturnAction" value="@Model.ReturnAction" />
+                                <input type="hidden" name="SearchTerm" value="@Model.SearchTerm" />
+                                <button type="submit" class="btn btn-sm btn-primary w-100">Import Movie</button>
+                            </form>
+                        }
+                    </div>
+                </article>
+            </div>
+        }
+    </div>
+}

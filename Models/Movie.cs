@@ -22,7 +22,7 @@ public class Movie
     public decimal Rating { get; set; }
 
     [Display(Name = "Duration (minutes)")]
-    [Range(1, 600)]
+    [Range(0, 600)]
     public int Duration { get; set; }
 
     [Display(Name = "Poster URL")]
@@ -33,4 +33,8 @@ public class Movie
     [Required]
     [StringLength(2000)]
     public string Description { get; set; } = string.Empty;
+
+    public ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+    public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
 }

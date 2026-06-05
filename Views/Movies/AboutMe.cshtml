@@ -1,0 +1,118 @@
+@{
+    ViewData["Title"] = "About Me";
+}
+
+<section class="about-hero content-panel mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-7">
+            <span class="section-kicker">About Me & Project</span>
+            <h1 class="h2 mt-2 mb-3">CineScope is my ASP.NET Core MVC movie discovery platform.</h1>
+            <p class="text-muted mb-4">
+                I built CineScope as a school mini project to demonstrate a complete MVC application:
+                movie management, a modern Bootstrap UI, authentication, member features, external API import,
+                admin analytics, and simple real-time notifications.
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-action="Discover" class="btn btn-primary">Explore App</a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Admin" asp-action="Index" class="btn btn-outline-light">Admin Dashboard</a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="/Admin" class="btn btn-outline-light">Admin Login</a>
+                }
+            </div>
+        </div>
+        <div class="col-12 col-lg-5">
+            <div class="about-profile-card">
+                <span class="section-kicker">Student Developer</span>
+                <h2 class="h4 mt-2 mb-2">Osman Osmani</h2>
+                <p class="text-muted mb-3">
+                    Focused on learning practical web development with ASP.NET Core MVC, SQL Server,
+                    Entity Framework Core, Identity, and clean project documentation.
+                </p>
+                <div class="about-meta-list">
+                    <span>Project: CineScope</span>
+                    <span>Category: Movie Discovery Platform</span>
+                    <span>Status: Final school submission ready</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4 mb-4">
+    <div class="col-12 col-lg-4">
+        <article class="about-info-card h-100">
+            <span class="section-kicker">Architecture</span>
+            <h2 class="h5 mt-2">MVC Structure</h2>
+            <p class="text-muted mb-0">
+                Controllers handle requests, models represent data, Razor views render UI, services handle external API logic,
+                and view models keep page data organized.
+            </p>
+        </article>
+    </div>
+    <div class="col-12 col-lg-4">
+        <article class="about-info-card h-100">
+            <span class="section-kicker">Data</span>
+            <h2 class="h5 mt-2">EF Core & Identity</h2>
+            <p class="text-muted mb-0">
+                SQL Server stores movies, reviews, favorites, users, and roles. ASP.NET Identity protects Admin and Member features.
+            </p>
+        </article>
+    </div>
+    <div class="col-12 col-lg-4">
+        <article class="about-info-card h-100">
+            <span class="section-kicker">Integration</span>
+            <h2 class="h5 mt-2">TMDB & SignalR</h2>
+            <p class="text-muted mb-0">
+                Admin users can import movies from TMDB, while SignalR provides lightweight live notifications and active user counts.
+            </p>
+        </article>
+    </div>
+</section>
+
+<section class="content-panel mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+        <div>
+            <span class="section-kicker">Final Features</span>
+            <h2 class="h4 mt-2 mb-1">What CineScope Includes</h2>
+        </div>
+    </div>
+
+    <div class="about-feature-grid">
+        <div>Modern dark movie discovery homepage</div>
+        <div>Movie CRUD management for Admin</div>
+        <div>Search and filtering by movie data</div>
+        <div>Member reviews, ratings, and favorites</div>
+        <div>TMDB search, trending, and import</div>
+        <div>Duplicate import prevention</div>
+        <div>Admin dashboard analytics</div>
+        <div>SignalR live notifications</div>
+        <div>Portfolio documentation in Docs folder</div>
+    </div>
+</section>
+
+<section class="content-panel">
+    <div class="row g-4">
+        <div class="col-12 col-lg-5">
+            <span class="section-kicker">Demo Path</span>
+            <h2 class="h4 mt-2 mb-3">Recommended Presentation Flow</h2>
+            <p class="text-muted mb-0">
+                Use this order when recording the final demo video or presenting the project in class.
+            </p>
+        </div>
+        <div class="col-12 col-lg-7">
+            <ol class="about-demo-list mb-0">
+                <li>Show the homepage and movie cards.</li>
+                <li>Search/filter movies and open movie details.</li>
+                <li>Login as Admin and show movie management.</li>
+                <li>Import a movie from TMDB.</li>
+                <li>Login as Member and add a review/favorite.</li>
+                <li>Open Admin Dashboard and explain analytics.</li>
+                <li>Show the Docs folder and README for submission.</li>
+            </ol>
+        </div>
+    </div>
+</section>
