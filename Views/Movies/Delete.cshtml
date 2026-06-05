@@ -27,7 +27,7 @@
     </div>
     <div class="col-12 col-md-8 col-lg-9">
         <h2 class="h4">@Model.Title</h2>
-        <p class="text-muted">@Model.Genre | @Model.ReleaseYear | @Model.Duration min</p>
+        <p class="text-muted">@Model.Genre | @Model.ReleaseYear | @Model.DurationDisplay</p>
         <p>@Model.Description</p>
 
         <form asp-action="Delete" method="post" class="d-flex gap-2">

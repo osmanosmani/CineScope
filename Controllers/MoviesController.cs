@@ -81,8 +81,10 @@ public class MoviesController : Controller
         return View();
     }
 
-    public async Task<IActionResult> Index(string? searchTerm, string? genre, int? releaseYear)
+    public async Task<IActionResult> Index(string? searchTerm, string? genre, int? releaseYear, int page = 1)
     {
+        const int pageSize = 8;
+
         var normalizedSearchTerm = string.IsNullOrWhiteSpace(searchTerm)
             ? null
             : searchTerm.Trim();
@@ -121,6 +123,17 @@ public class MoviesController : Controller
             moviesQuery = moviesQuery.Where(movie => movie.ReleaseYear == releaseYear.Value);
         }
 
+        var totalMovies = await moviesQuery.CountAsync();
+        var totalPages = totalMovies == 0
+            ? 1
+            : (int)Math.Ceiling(totalMovies / (double)pageSize);
+        var currentPage = Math.Clamp(page, 1, totalPages);
+        var movies = await moviesQuery
+            .OrderBy(movie => movie.Title)
+            .Skip((currentPage - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
         var viewModel = new MovieIndexViewModel
         {
             SearchTerm = normalizedSearchTerm,
@@ -128,9 +141,10 @@ public class MoviesController : Controller
             SelectedReleaseYear = releaseYear,
             Genres = genres,
             ReleaseYears = releaseYears,
-            Movies = await moviesQuery
-                .OrderBy(movie => movie.Title)
-                .ToListAsync()
+            Movies = movies,
+            PageNumber = currentPage,
+            PageSize = pageSize,
+            TotalMovies = totalMovies
         };
 
         return View(viewModel);

@@ -73,7 +73,7 @@
                         <h2 class="h5 mt-3 mb-1">@Model.SpotlightMovie.Title</h2>
                         <p class="small text-muted mb-3">
                             @Model.SpotlightMovie.Genre | @Model.SpotlightMovie.ReleaseYear |
-                            @(Model.SpotlightMovie.Duration > 0 ? $"{Model.SpotlightMovie.Duration} min" : "Unknown duration")
+                            @Model.SpotlightMovie.DurationDisplay
                         </p>
                         <a asp-action="Details" asp-route-id="@Model.SpotlightMovie.Id" class="btn btn-sm btn-primary w-100">Details</a>
                     </div>
@@ -176,7 +176,7 @@
                                 <span class="badge rating-badge">@movie.Rating.ToString("0.0")</span>
                             </div>
                             <h3 class="h6 mb-1">@movie.Title</h3>
-                            <p class="small text-muted mb-3">@movie.ReleaseYear | @(movie.Duration > 0 ? $"{movie.Duration} min" : "Unknown duration")</p>
+                            <p class="small text-muted mb-3">@movie.ReleaseYear | @movie.DurationDisplay</p>
                             <a asp-action="Details" asp-route-id="@movie.Id" class="btn btn-sm btn-outline-light w-100">Details</a>
                         </div>
                     </article>

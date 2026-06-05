@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CineScope.Models;
 
@@ -24,6 +25,30 @@ public class Movie
     [Display(Name = "Duration (minutes)")]
     [Range(0, 600)]
     public int Duration { get; set; }
+
+    [NotMapped]
+    public string DurationDisplay
+    {
+        get
+        {
+            if (Duration <= 0)
+            {
+                return "Unknown";
+            }
+
+            var hours = Duration / 60;
+            var minutes = Duration % 60;
+
+            if (hours == 0)
+            {
+                return $"{minutes}m";
+            }
+
+            return minutes == 0
+                ? $"{hours}h"
+                : $"{hours}h {minutes}m";
+        }
+    }
 
     [Display(Name = "Poster URL")]
     [Url]

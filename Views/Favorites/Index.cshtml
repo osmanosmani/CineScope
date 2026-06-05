@@ -44,7 +44,7 @@ else
                         </div>
                         <h2 class="h6 mb-1">@favorite.Movie.Title</h2>
                         <p class="small text-muted mb-3">
-                            @favorite.Movie.ReleaseYear | @(favorite.Movie.Duration > 0 ? $"{favorite.Movie.Duration} min" : "Unknown duration")
+                            @favorite.Movie.ReleaseYear | @favorite.Movie.DurationDisplay
                         </p>
                         <div class="favorite-card-actions">
                             <a asp-controller="Movies" asp-action="Details" asp-route-id="@favorite.MovieId" class="btn btn-sm btn-outline-light">Details</a>

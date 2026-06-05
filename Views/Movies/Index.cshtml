@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Movies";
+    var startPage = Math.Max(1, Model.PageNumber - 2);
+    var endPage = Math.Min(Model.TotalPages, Model.PageNumber + 2);
 }
 
 <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
@@ -71,7 +73,18 @@
 <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
     <div>
         <p class="text-muted mb-2">
-            Showing <strong>@Model.Movies.Count</strong> movie(s)
+            Showing
+            @if (Model.TotalMovies == 0)
+            {
+                <strong>0</strong>
+            }
+            else
+            {
+                <strong>@Model.FirstItemNumber-@Model.LastItemNumber</strong>
+                <span>of</span>
+                <strong>@Model.TotalMovies</strong>
+            }
+            movie(s)
             @if (Model.HasActiveFilters)
             {
                 <span>matching your filters</span>
@@ -162,7 +175,7 @@ else
                         <td><span class="badge genre-badge">@movie.Genre</span></td>
                         <td>@movie.ReleaseYear</td>
                         <td><span class="badge rating-badge">@movie.Rating.ToString("0.0")</span></td>
-                        <td>@(movie.Duration > 0 ? $"{movie.Duration} min" : "Unknown")</td>
+                        <td>@movie.DurationDisplay</td>
                         <td class="text-end">
                             <div class="btn-group" role="group" aria-label="Movie actions">
                                 <a asp-action="Details" asp-route-id="@movie.Id" class="btn btn-sm btn-outline-secondary">Details</a>
@@ -178,4 +191,96 @@ else
             </tbody>
         </table>
     </div>
+
+    @if (Model.ShouldShowPagination)
+    {
+        <nav class="app-pagination mt-4" aria-label="Movie pagination">
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                <p class="text-muted mb-0">
+                    Page <strong>@Model.PageNumber</strong> of <strong>@Model.TotalPages</strong>
+                </p>
+
+                <ul class="pagination mb-0">
+                    <li class="page-item @(Model.HasPreviousPage ? string.Empty : "disabled")">
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-searchTerm="@Model.SearchTerm"
+                           asp-route-genre="@Model.SelectedGenre"
+                           asp-route-releaseYear="@Model.SelectedReleaseYear"
+                           asp-route-page="@(Math.Max(1, Model.PageNumber - 1))"
+                           aria-disabled="@(Model.HasPreviousPage ? null : "true")">
+                            Previous
+                        </a>
+                    </li>
+
+                    @if (startPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-searchTerm="@Model.SearchTerm"
+                               asp-route-genre="@Model.SelectedGenre"
+                               asp-route-releaseYear="@Model.SelectedReleaseYear"
+                               asp-route-page="1">
+                                1
+                            </a>
+                        </li>
+                        @if (startPage > 2)
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        }
+                    }
+
+                    @for (var pageNumber = startPage; pageNumber <= endPage; pageNumber++)
+                    {
+                        <li class="page-item @(pageNumber == Model.PageNumber ? "active" : string.Empty)"
+                            aria-current="@(pageNumber == Model.PageNumber ? "page" : null)">
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-searchTerm="@Model.SearchTerm"
+                               asp-route-genre="@Model.SelectedGenre"
+                               asp-route-releaseYear="@Model.SelectedReleaseYear"
+                               asp-route-page="@pageNumber">
+                                @pageNumber
+                            </a>
+                        </li>
+                    }
+
+                    @if (endPage < Model.TotalPages)
+                    {
+                        @if (endPage < Model.TotalPages - 1)
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        }
+                        <li class="page-item">
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-searchTerm="@Model.SearchTerm"
+                               asp-route-genre="@Model.SelectedGenre"
+                               asp-route-releaseYear="@Model.SelectedReleaseYear"
+                               asp-route-page="@Model.TotalPages">
+                                @Model.TotalPages
+                            </a>
+                        </li>
+                    }
+
+                    <li class="page-item @(Model.HasNextPage ? string.Empty : "disabled")">
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-searchTerm="@Model.SearchTerm"
+                           asp-route-genre="@Model.SelectedGenre"
+                           asp-route-releaseYear="@Model.SelectedReleaseYear"
+                           asp-route-page="@(Math.Min(Model.TotalPages, Model.PageNumber + 1))"
+                           aria-disabled="@(Model.HasNextPage ? null : "true")">
+                            Next
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    }
 }

@@ -1,4 +1,14 @@
 ﻿<!DOCTYPE html>
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var isHomeActive = currentController == "Movies" && currentAction == "Discover";
+    var isMoviesActive = currentController == "Movies" && currentAction == "Index";
+    var isAboutActive = currentController == "Movies" && currentAction == "AboutMe";
+    var isDashboardActive = currentController == "Admin";
+    var isExternalMoviesActive = currentController == "ExternalMovies";
+    var isFavoritesActive = currentController == "Favorites";
+}
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -21,33 +31,33 @@
                 <div class="navbar-collapse collapse">
                     <ul class="navbar-nav me-auto mb-3 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Movies" asp-action="Discover">Home</a>
+                            <a class="nav-link @(isHomeActive ? "active" : string.Empty)" asp-area="" asp-controller="Movies" asp-action="Discover" aria-current="@(isHomeActive ? "page" : null)">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Movies" asp-action="Index">Movies</a>
+                            <a class="nav-link @(isMoviesActive ? "active" : string.Empty)" asp-area="" asp-controller="Movies" asp-action="Index" aria-current="@(isMoviesActive ? "page" : null)">Movies</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Movies" asp-action="Discover" asp-fragment="genres">Genres</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Movies" asp-action="AboutMe">About Me</a>
+                            <a class="nav-link @(isAboutActive ? "active" : string.Empty)" asp-area="" asp-controller="Movies" asp-action="AboutMe" aria-current="@(isAboutActive ? "page" : null)">About Me</a>
                         </li>
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Dashboard</a>
+                                <a class="nav-link @(isDashboardActive ? "active" : string.Empty)" asp-area="" asp-controller="Admin" asp-action="Index" aria-current="@(isDashboardActive ? "page" : null)">Dashboard</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Movies" asp-action="Index">Manage Movies</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="ExternalMovies" asp-action="Search">Import Movies</a>
+                                <a class="nav-link @(isExternalMoviesActive ? "active" : string.Empty)" asp-area="" asp-controller="ExternalMovies" asp-action="Search" aria-current="@(isExternalMoviesActive ? "page" : null)">Import Movies</a>
                             </li>
                         }
                         @if (User.IsInRole("Member"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Favorites" asp-action="Index">Favorites</a>
+                                <a class="nav-link @(isFavoritesActive ? "active" : string.Empty)" asp-area="" asp-controller="Favorites" asp-action="Index" aria-current="@(isFavoritesActive ? "page" : null)">Favorites</a>
                             </li>
                         }
                     </ul>

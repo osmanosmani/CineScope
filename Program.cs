@@ -63,7 +63,7 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Movies}/{action=Index}/{id?}");
+    pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapHub<ReviewHub>("/hubs/reviews");
 

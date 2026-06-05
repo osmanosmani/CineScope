@@ -73,7 +73,7 @@
             <dd class="col-sm-8">@Model.Movie.ReleaseYear</dd>
 
             <dt class="col-sm-4">Duration</dt>
-            <dd class="col-sm-8">@(Model.Movie.Duration > 0 ? $"{Model.Movie.Duration} minutes" : "Unknown")</dd>
+            <dd class="col-sm-8">@Model.Movie.DurationDisplay</dd>
 
             <dt class="col-sm-4">Description</dt>
             <dd class="col-sm-8">@Model.Movie.Description</dd>
