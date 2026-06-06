@@ -43,7 +43,7 @@ public class MoviesController : Controller
         if (selectedGenre != null)
         {
             filteredMovies = filteredMovies.Where(movie =>
-                string.Equals(movie.Genre, selectedGenre, StringComparison.OrdinalIgnoreCase));
+                MovieHasGenre(movie, selectedGenre));
         }
 
         var movies = filteredMovies.ToList();
@@ -60,12 +60,8 @@ public class MoviesController : Controller
                 .Take(6)
                 .ToList(),
             Movies = movies,
-            Genres = allMovies
-                .Select(movie => movie.Genre)
-                .Distinct()
-                .OrderBy(genre => genre)
-                .ToList(),
-            TotalMovies = allMovies.Count
+            Genres = BuildGenreList(allMovies.Select(movie => movie.Genre)),
+            TotalMovies = movies.Count
         };
 
         return View(viewModel);
@@ -92,12 +88,12 @@ public class MoviesController : Controller
             ? null
             : genre.Trim();
 
-        var genres = await _context.Movies
+        var genreValues = await _context.Movies
             .AsNoTracking()
             .Select(movie => movie.Genre)
             .Distinct()
-            .OrderBy(movieGenre => movieGenre)
             .ToListAsync();
+        var genres = BuildGenreList(genreValues);
 
         var releaseYears = await _context.Movies
             .AsNoTracking()
@@ -115,7 +111,7 @@ public class MoviesController : Controller
 
         if (selectedGenre != null)
         {
-            moviesQuery = moviesQuery.Where(movie => movie.Genre == selectedGenre);
+            moviesQuery = moviesQuery.Where(movie => movie.Genre.Contains(selectedGenre));
         }
 
         if (releaseYear.HasValue)
@@ -307,5 +303,28 @@ public class MoviesController : Controller
     private bool MovieExists(int id)
     {
         return _context.Movies.Any(movie => movie.Id == id);
+    }
+
+    private static List<string> BuildGenreList(IEnumerable<string> genreValues)
+    {
+        return genreValues
+            .SelectMany(SplitGenres)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(genre => genre, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+    private static bool MovieHasGenre(Movie movie, string selectedGenre)
+    {
+        return SplitGenres(movie.Genre)
+            .Any(genre => string.Equals(genre, selectedGenre, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static IEnumerable<string> SplitGenres(string? genreValue)
+    {
+        return string.IsNullOrWhiteSpace(genreValue)
+            ? Enumerable.Empty<string>()
+            : genreValue.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Where(genre => !string.IsNullOrWhiteSpace(genre));
     }
 }

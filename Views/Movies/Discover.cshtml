@@ -30,12 +30,21 @@
                 </div>
             </form>
 
-            <div class="d-flex flex-wrap align-items-center gap-3">
-                <span class="catalog-stat">@Model.TotalMovies movie(s)</span>
+            <div class="catalog-summary" aria-label="Catalog summary">
+                <div class="catalog-metric">
+                    <span class="catalog-metric-value">@Model.TotalMovies</span>
+                    <span class="catalog-metric-label">Movies</span>
+                </div>
                 @if (Model.SpotlightMovie != null)
                 {
-                    <span class="catalog-stat">@Model.SpotlightMovie.Rating.ToString("0.0") top rating</span>
-                    <span class="catalog-stat">@Model.SpotlightMovie.Genre spotlight</span>
+                    <div class="catalog-metric">
+                        <span class="catalog-metric-value">@Model.SpotlightMovie.Rating.ToString("0.0")</span>
+                        <span class="catalog-metric-label">Top rating</span>
+                    </div>
+                    <div class="catalog-metric catalog-metric-wide">
+                        <span class="catalog-metric-value">@Model.SpotlightMovie.PrimaryGenre</span>
+                        <span class="catalog-metric-label">Spotlight genre</span>
+                    </div>
                 }
             </div>
 
@@ -71,8 +80,8 @@
                     <div class="spotlight-card-body">
                         <span class="badge rating-badge">@Model.SpotlightMovie.Rating.ToString("0.0")</span>
                         <h2 class="h5 mt-3 mb-1">@Model.SpotlightMovie.Title</h2>
-                        <p class="small text-muted mb-3">
-                            @Model.SpotlightMovie.Genre | @Model.SpotlightMovie.ReleaseYear |
+                        <p class="small text-muted mb-3" title="@Model.SpotlightMovie.Genre">
+                            @Model.SpotlightMovie.PrimaryGenre | @Model.SpotlightMovie.ReleaseYear |
                             @Model.SpotlightMovie.DurationDisplay
                         </p>
                         <a asp-action="Details" asp-route-id="@Model.SpotlightMovie.Id" class="btn btn-sm btn-primary w-100">Details</a>
@@ -172,7 +181,7 @@
                         </a>
                         <div class="movie-card-body">
                             <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
-                                <span class="badge genre-badge">@movie.Genre</span>
+                                <span class="badge genre-badge" title="@movie.Genre">@movie.PrimaryGenre</span>
                                 <span class="badge rating-badge">@movie.Rating.ToString("0.0")</span>
                             </div>
                             <h3 class="h6 mb-1">@movie.Title</h3>
@@ -202,7 +211,7 @@
                 <a asp-action="Details" asp-route-id="@movie.Id" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-3">
                     <span>
                         <strong>@movie.Title</strong>
-                        <span class="text-muted ms-2">@movie.Genre</span>
+                        <span class="text-muted ms-2" title="@movie.Genre">@movie.PrimaryGenre</span>
                     </span>
                     <span class="badge text-bg-dark border">@movie.ReleaseYear</span>
                 </a>

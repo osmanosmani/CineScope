@@ -188,7 +188,41 @@ main {
   max-width: 680px;
 }
 
-.catalog-stat,
+.catalog-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.catalog-metric {
+  border-left: 2px solid rgba(229, 9, 20, 0.85);
+  min-width: 92px;
+  padding-left: 0.75rem;
+}
+
+.catalog-metric-wide {
+  min-width: 150px;
+}
+
+.catalog-metric-value,
+.catalog-metric-label {
+  display: block;
+}
+
+.catalog-metric-value {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.catalog-metric-label {
+  color: var(--app-muted);
+  font-size: 0.78rem;
+  margin-top: 0.15rem;
+  text-transform: uppercase;
+}
+
 .active-filter-badge {
   background-color: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);

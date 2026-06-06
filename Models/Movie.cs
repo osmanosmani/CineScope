@@ -15,6 +15,15 @@ public class Movie
     [StringLength(60)]
     public string Genre { get; set; } = string.Empty;
 
+    [NotMapped]
+    public IReadOnlyList<string> GenreList =>
+        Genre.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(genre => !string.IsNullOrWhiteSpace(genre))
+            .ToList();
+
+    [NotMapped]
+    public string PrimaryGenre => GenreList.FirstOrDefault() ?? "Uncategorized";
+
     [Display(Name = "Release Year")]
     [Range(1888, 2100)]
     public int ReleaseYear { get; set; }

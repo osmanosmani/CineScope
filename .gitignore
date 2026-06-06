@@ -21,6 +21,7 @@ x86/
 # Local logs
 *.log
 tools/
+.codex-remote-attachments/
 
 # Visual Studio publish profiles can contain environment-specific deployment data.
 Properties/PublishProfiles/
